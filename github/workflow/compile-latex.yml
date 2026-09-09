@@ -1,0 +1,30 @@
+name: Compilar LaTeX a PDF
+
+on:
+  push:
+    paths:
+      - '**.tex' # Se ejecuta solo cuando modificas un archivo .tex
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Compilar documento LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+
+      - name: Cambiar nombre del PDF generado (opcional)
+        run: |
+          if [ -f main.pdf ]; then
+            mv main.pdf principal.pdf
+          fi
+
+      - name: Guardar y subir el PDF actualizado al repositorio
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "bot: Compilación automática de PDF [skip ci]"
+          file_pattern: 'principal.pdf'
